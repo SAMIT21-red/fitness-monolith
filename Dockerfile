@@ -1,12 +1,20 @@
-# -------- BUILD STAGE --------
-FROM eclipse-temurin:21-jdk AS build
+# -------- Build stage --------
+FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
-COPY . .
+
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw mvnw
+RUN chmod +x mvnw && ./mvnw -q -B dependency:go-offline
+
+COPY src src
 RUN ./mvnw clean package -DskipTests
 
-# -------- RUN STAGE --------
+# -------- Runtime stage --------
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=build /app/target/fitness-monolith-0.0.1-SNAPSHOT.jar app.jar
+
+COPY --from=builder /app/target/*jar app.jar
+
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
