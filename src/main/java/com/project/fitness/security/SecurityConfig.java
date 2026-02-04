@@ -43,10 +43,8 @@ public class SecurityConfig {
                                 "/",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/auth/**"
+                                "/api/auth/**"
                         ).permitAll()
-
-                        // 🔒 Everything else needs JWT
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
