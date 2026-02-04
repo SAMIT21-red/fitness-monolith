@@ -38,21 +38,26 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register",
-                                                   "/api/users/login",
-                                                    "/swagger-ui/html",
+                        // ✅ PUBLIC endpoints
+                        .requestMatchers(
+                                "/",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
-                                            ).permitAll()
+                                "/v3/api-docs/**",
+                                "/auth/**"
+                        ).permitAll()
+
+                        // 🔒 Everything else needs JWT
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // ✅ IMPORTANT
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
+
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
 
     @Bean
