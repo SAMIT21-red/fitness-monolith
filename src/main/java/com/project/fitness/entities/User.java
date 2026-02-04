@@ -17,6 +17,7 @@ import java.util.*;
 
 @Entity
 @Access(AccessType.FIELD)
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
